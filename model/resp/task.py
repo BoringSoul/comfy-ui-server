@@ -1,9 +1,10 @@
 from pydantic import BaseModel
-
+from typing import Optional
 class PromptResponse(BaseModel):
-    prompt_id: str 
+    task_id: str 
     number: int
     node_errors: dict
+    prompt_id: Optional[str] = None
 
 class QueueResponese(BaseModel):
     queue_running: list

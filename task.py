@@ -1,6 +1,7 @@
 
 import json
 import requests
+import uuid
 
 from starlette.responses import JSONResponse
 from starlette.responses import Response
@@ -22,6 +23,7 @@ import pickle
 #               inputs
 #               outputs
 #               status
+#               host
 USER_TASK = {}
 # task_id -> prompt_id
 TASK_ID_MAP = {}
@@ -44,20 +46,17 @@ def load_map():
 
 load_map()
 
-def save_user_task():
+def save_all_map():
     with open("./user_task.pkl", "wb") as f:
         global USER_TASK
         pickle.dump(USER_TASK, f)
-
-def save_task_id_map():
     with open("./task_id_map.pkl", "wb") as f:
         global TASK_ID_MAP
         pickle.dump(TASK_ID_MAP, f)
-
-def save_queue_map():
     with open("./queue_map.pkl", "wb") as f:
         global QUEUE_MAP
         pickle.dump(QUEUE_MAP, f)
+
 
 class Image(HTTPEndpoint):
     @requires("authenticated")
@@ -75,19 +74,29 @@ class Prompt(HTTPEndpoint):
     @requires("authenticated")
     async def post(self, request):
         data = await request.json()
-        prompt_request = PromptRequest(**data)
-        prompt = get_prompt(prompt_request=prompt_request)
         client_id = request.user.username
-        resp = self.prompt(client_id=client_id, prompt=prompt)
-        result = PromptResponse(**resp.json())
-        if not result.node_errors:
-            USER_TASK[client_id] = {
-                result.prompt_id: {
-                    "inputs": data
-                }
+        queue_name = "vip" if "vip" in request.auth.scopes else "normal"
+        task_id = str(uuid.uuid4())
+        QUEUE_MAP[queue_name].put({
+            {
+                task_id: client_id
             }
-            save_user_task()
-        return JSONResponse(resp.json())
+        })
+        USER_TASK[client_id] = {
+            "task_id": task_id,
+            "inputs": data,
+            "status": "pending"
+        }
+        # resp = self.prompt(client_id=client_id, prompt=prompt)
+        # result = PromptResponse(**resp.json())
+        # if not result.node_errors:
+        #     USER_TASK[client_id] = {
+        #         result.prompt_id: {
+        #             "inputs": data
+        #         }
+        #     }
+        save_all_map()
+        return JSONResponse(USER_TASK[client_id])
     
     def prompt(self, client_id:str, prompt:dict):
         return requests.post(f'{URL}/prompt', json.dumps({
@@ -101,12 +110,7 @@ class Queue(HTTPEndpoint):
         client_id = request.user.username
         if not USER_TASK.__contains__(client_id):
             return JSONResponse({})
-        resp = self.get_queue()
-        result = QueueResponese(**resp.json())
-        return JSONResponse({
-            "queue_pending": [{"task_id":i[1], "inputs": USER_TASK[client_id][i[1]]["inputs"]} for i in result.queue_pending if USER_TASK[client_id].__contains__(i[1])],
-            "queue_running": [{"task_id":i[1], "inputs": USER_TASK[client_id][i[1]]["inputs"]} for i in result.queue_running if USER_TASK[client_id].__contains__(i[1])]
-        })
+        return JSONResponse(USER_TASK[client_id])
     
     def get_queue(self):
         return requests.get(f'{URL}/queue')
@@ -126,7 +130,7 @@ class Status(HTTPEndpoint):
                     result = StatusResponse(**history[k])
                     USER_TASK[client_id][k]["status"] = result.status
                     USER_TASK[client_id][k]["outputs"] = result.outputs
-            save_user_task()
+            save_all_map()
             return JSONResponse(USER_TASK[client_id])
     
     def get_history(self):
