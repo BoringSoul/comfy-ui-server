@@ -10,7 +10,7 @@ import base64
 class Register(HTTPEndpoint):
     async def post(self, request):
         data = await request.json()
-        await add_user(user.RegisterRequest(**data))
+        await add_user(data)
         return JSONResponse({"code": 200, "msg":"success"})
 
 

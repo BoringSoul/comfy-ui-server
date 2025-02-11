@@ -30,8 +30,8 @@ users = sqlalchemy.Table(
     sqlalchemy.Column("register_time", sqlalchemy.DateTime),
 )
 
-async def add_user(user:BaseModel):
-    await DB.execute(users.insert().values(**user.model_dump()))
+async def add_user(user:dict):
+    await DB.execute(users.insert().values(**user))
 
 async def find_by_username(username:str) -> List:
     result = await DB.fetch_one(users.select().where(users.c.username == username))
