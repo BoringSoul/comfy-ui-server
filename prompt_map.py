@@ -106,7 +106,7 @@ PROMPT_MAP = {
         },
         "10": {
             "inputs": {
-            "frame_rate": 8,
+            "frame_rate": 25,
             "loop_count": 0,
             "filename_prefix": "svd",
             "format": "video/h264-mp4",
@@ -129,18 +129,18 @@ PROMPT_MAP = {
     }
 }
 
-from model.request.task import PromptRequest
+from model.req.task import PromptRequest
 def get_prompt(prompt_request:PromptRequest) -> dict:
     prompt = PROMPT_MAP.get(prompt_request.model_name)
-    prompt["6"]["image"] = prompt_request.image_name
+    prompt["6"]["inputs"]["image"] = prompt_request.image_name
     if prompt_request.width:
-        prompt["6"]["width"] = prompt_request.width
+        prompt["1"]["inputs"]["width"] = prompt_request.width
     if prompt_request.height:
-        prompt["6"]["height"] = prompt_request.height
+        prompt["1"]["inputs"]["height"] = prompt_request.height
     if prompt_request.video_frames:
-        prompt["1"]["video_frames"] = prompt_request.video_frames
+        prompt["1"]["inputs"]["video_frames"] = prompt_request.video_frames
     if prompt_request.fps:
-        prompt["1"]["fps"] = prompt_request.fps
+        prompt["1"]["inputs"]["fps"] = prompt_request.fps
     if prompt_request.steps:
-        prompt["7"]["steps"] = prompt_request.steps
+        prompt["7"]["inputs"]["steps"] = prompt_request.steps
     return prompt

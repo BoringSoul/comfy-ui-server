@@ -4,10 +4,8 @@ from starlette.authentication import (
 )
 from starlette.middleware import Middleware
 from starlette.middleware.authentication import AuthenticationMiddleware
-from starlette.responses import PlainTextResponse
-from starlette.routing import Route
 import base64
-import binascii
+import model.db.user as user_query
 
 
 class BasicAuthBackend(AuthenticationBackend):
@@ -20,19 +18,22 @@ class BasicAuthBackend(AuthenticationBackend):
             scheme, credentials = auth.split()
             if scheme.lower() != 'basic':
                 return
-            decoded = base64.b64decode(credentials).decode("ascii")
-        except (ValueError, UnicodeDecodeError, binascii.Error) as exc:
-            raise AuthenticationError('Invalid basic auth credentials')
+            decoded = base64.b64decode(credentials).decode("utf-8")
+        except Exception as exc:
+            raise AuthenticationError(f'Invalid basic auth credentials:{exc}')
+        username, auth_type, credentials = decoded.split(":")
+        user = await user_query.find_by_username(username)
+        if not user or not self.validate(user, auth_type, credentials):
+            return AuthCredentials(["failed"]), SimpleUser(username)
+        return AuthCredentials(["authenticated", "normal" if not user.balance or user.balance == 0  else "vip"]), SimpleUser(username)
+    
+    def validate(self, user, auth_type, credential):
+        if auth_type == 'password':
+            return user.pwd == credential
+        elif auth_type == 'api_token' :
+            return user.api_token == credential
+        return False
 
-        username, _, password = decoded.partition(":")
-        # TODO: You'd want to verify the username and password here.
-        return AuthCredentials(["authenticated"]), SimpleUser(username)
-
-
-async def homepage(request):
-    if request.user.is_authenticated:
-        return PlainTextResponse('Hello, ' + request.user.display_name)
-    return PlainTextResponse('Hello, you')
 
 middlewares = [
     Middleware(AuthenticationMiddleware, backend=BasicAuthBackend())
