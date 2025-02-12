@@ -53,7 +53,8 @@ class Queue(HTTPEndpoint):
     @requires("authenticated")
     async def get(self, request:Request):
         client_id = request.user.username
-        result = await find_unfinished_by_client_id(client_id)
+        # result = await find_unfinished_by_client_id(client_id)
+        result = await find_unfinished_tasks()
         return JSONResponse({"data": None if not result else result})
     @requires("authenticated")
     async def post(self, request:Request):
