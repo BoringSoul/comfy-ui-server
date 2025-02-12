@@ -19,6 +19,7 @@ class UserTask(BaseModel):
     status: int
     start_time: datetime | None
     end_time: datetime | None
+    update_time: datetime | None
 
 class TaskStatus(Enum):
     PENDING = -1
@@ -42,10 +43,12 @@ user_tasks = sqlalchemy.Table(
     sqlalchemy.Column("outputs", sqlalchemy.String),
     sqlalchemy.Column("status", sqlalchemy.Integer),
     sqlalchemy.Column("start_time", sqlalchemy.DateTime),
-    sqlalchemy.Column("start_time", sqlalchemy.DateTime),
+    sqlalchemy.Column("end_time", sqlalchemy.DateTime),
+    sqlalchemy.Column("update_time", sqlalchemy.DateTime),
 )
 
 async def save_task(user_task:dict) -> None:
+    print(f'save task: {user_task}')
     await DB.execute(user_tasks.insert().values(**user_task))
 async def find_pending_tasks() -> List:
     return await DB.fetch_all(user_tasks.select().where(user_tasks.c.status == TaskStatus.PENDING.value))
@@ -54,7 +57,15 @@ async def find_unfinished_tasks() -> List:
     return await DB.fetch_all(user_tasks.select().where(user_tasks.c.status == TaskStatus.PENDING.value or user_tasks.c.status == TaskStatus.RUNNING.value))
 
 async def find_unfinished_by_client_id(client_id:str) -> List:
-    return await DB.fetch_all(user_tasks.select().where(user_tasks.c.client_id == client_id and (user_tasks.c.status == TaskStatus.PENDING.value or user_tasks.c.status == TaskStatus.RUNNING.value)))
+    return await DB.fetch_all(user_tasks.select()
+                              .where(user_tasks.c.client_id == client_id \
+                                     and (user_tasks.c.status == TaskStatus.PENDING.value \
+                                          or user_tasks.c.status == TaskStatus.RUNNING.value))
+                                          .order_by(user_tasks.c.start_time.desc()))
 
 async def find_by_client_id(client_id:str) -> List:
     return await DB.fetch_all(user_tasks.select().where(user_tasks.c.client_id == client_id))
+
+
+async def update_user_task(user_task:dict) -> None:
+    await DB.execute(user_tasks.update().where(user_tasks.c.task_id == user_task["task_id"]).values(**user_task))

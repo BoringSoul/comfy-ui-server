@@ -1,10 +1,11 @@
 
-import json
 import requests
 import uuid
+from datetime import datetime
 
 from starlette.responses import JSONResponse
 from starlette.responses import Response
+from starlette.requests import Request
 from starlette.endpoints import HTTPEndpoint
 from starlette.routing import Route
 from model.req.task import *
@@ -13,7 +14,7 @@ from model.db.user_task import *
 from prompt_map import *
 from starlette.authentication import requires
 
-HOST = "35.183.70.208"
+HOST = "99.79.37.130"
 URL = f"http://{HOST}:8188"
 
 class Image(HTTPEndpoint):
@@ -30,7 +31,7 @@ class Image(HTTPEndpoint):
 
 class Prompt(HTTPEndpoint):
     @requires("authenticated")
-    async def post(self, request):
+    async def post(self, request:Request):
         inputs = await request.json()
         task_id = str(uuid.uuid4())
         client_id = request.user.username
@@ -39,15 +40,17 @@ class Prompt(HTTPEndpoint):
             "task_id": task_id,
             "client_id": client_id,
             "user_type": user_type,
-            "inputs": json.dumps(inputs),
-            "status": TaskStatus.PENDING.value
+            "inputs": str(inputs),
+            "status": TaskStatus.PENDING.value,
+            "start_time": datetime.now()
         }
-        save_task(user_task)
+        await save_task(user_task)
+        user_task["inputs"] = inputs
         return JSONResponse(user_task)
     
 class Queue(HTTPEndpoint):
     @requires("authenticated")
-    async def get(self, request):
+    async def get(self, request:Request):
         client_id = request.user.username
         result = await find_unfinished_by_client_id(client_id)
         return JSONResponse(result)
@@ -60,7 +63,7 @@ class Status(HTTPEndpoint):
         return JSONResponse(result)
     
 class Video(HTTPEndpoint):
-    async def get(self, request):
+    async def get(self, request:Request):
         assert request.query_params["filename"]
         resp = self.get_video(request.query_params["filename"])
         return Response(content=resp.content, media_type="video/mp4")

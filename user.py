@@ -1,7 +1,6 @@
 from starlette.responses import JSONResponse
 from starlette.endpoints import HTTPEndpoint
 from starlette.routing import Route
-from model.req import user
 from model.db.user import *
 
 import base64
