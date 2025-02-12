@@ -58,6 +58,12 @@ async def save_task(user_task:dict) -> None:
 async def find_pending_tasks() -> List:
     return await DB.fetch_all(user_tasks.select().where(user_tasks.c.status == TaskStatus.PENDING.value))
 
+async def delete_pending_tasks(client_id:str):
+    return await DB.execute(user_tasks.delete().where(user_tasks.c.client_id == client_id and user_tasks.c.status == TaskStatus.PENDING.value))
+
+async def delete_pending_task(task_id:str):
+    return await DB.execute(user_tasks.delete().where(user_tasks.c.task_id == task_id and user_tasks.c.status == TaskStatus.PENDING.value))
+
 async def find_unfinished_tasks() -> List:
     return await DB.fetch_all(user_tasks.select().where(user_tasks.c.status == TaskStatus.PENDING.value or user_tasks.c.status == TaskStatus.RUNNING.value))
 
@@ -69,10 +75,17 @@ async def find_unfinished_by_client_id(client_id:str) -> List:
                                           .order_by(user_tasks.c.start_time.desc()))
     return None if not lst else [format_datetime(UserTask(**item).model_dump()) for item in lst]
 
+async def find_by_task_id(task_id:str) -> dict:
+    i = await DB.fetch_one(user_tasks.select().where(user_tasks.c.task_id == task_id))
+    return None if not i else format_datetime(UserTask(**i).model_dump())
+
 async def find_by_client_id(client_id:str) -> List:
     lst = await DB.fetch_all(user_tasks.select().where(user_tasks.c.client_id == client_id))
     return None if not lst else [format_datetime(UserTask(**item).model_dump()) for item in lst]
 
+async def find_running_tasks(client_id:str) -> List:
+    lst = await DB.fetch_all(user_tasks.select().where(user_tasks.c.client_id == client_id and user_tasks.c.status == TaskStatus.RUNNING.value))
+    return None if not lst else [format_datetime(UserTask(**item).model_dump()) for item in lst]
 
 async def update_user_task(user_task:dict) -> None:
     await DB.execute(user_tasks.update().where(user_tasks.c.task_id == user_task["task_id"]).values(**user_task))

@@ -55,6 +55,39 @@ class Queue(HTTPEndpoint):
         client_id = request.user.username
         result = await find_unfinished_by_client_id(client_id)
         return JSONResponse({"data": None if not result else result})
+    @requires("authenticated")
+    async def post(self, request:Request):
+        data = await request.json()
+        if data["clear"]:
+            await delete_pending_tasks(client_id=request.user.username)
+        if data["task_id"]:
+            await delete_pending_task(data["task_id"])
+        return JSONResponse({"code": 200, "msg": "ok"})
+
+class Interrupt(HTTPEndpoint):
+    @requires("authenticated")
+    async def post(self, request:Request):
+        data = await request.json()
+        assert data['task_id']
+        task = await find_by_task_id(data["task_id"])
+        if task["status"] != TaskStatus.RUNNING.value or not task["prompt_id"]:
+            return JSONResponse({"code": 400, "msg": "task is invalid"})
+        if self.task_running(task["server_ip"], task["prompt_id"]):
+            self.interrupt(task["server_ip"])
+        await update_user_task({
+            "task_id": data["task_id"],
+            "status": TaskStatus.INTERUPTED.value,
+            "end_time": datetime.now()
+        })
+        return JSONResponse({"code": 200,"msg": "ok"})
+    
+    def task_running(self, host:str, prompt_id:str)->bool:
+        resp = requests.get(f"http://{host}:8188/queue")
+        return resp.status_code == 200 and prompt_id == resp["queue_running"][1]
+    
+    def interrupt(self, host:str)-> bool:
+        requests.post(host=f"http://{host}:8188/interrupt")
+
 
 class Status(HTTPEndpoint):
     @requires("authenticated")
@@ -82,4 +115,5 @@ routes = [
     Route("/queue", Queue),
     Route("/status", Status),
     Route("/video", Video),
+    Route("/interrupt", Interrupt),
 ]
