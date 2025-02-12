@@ -47,6 +47,11 @@ user_tasks = sqlalchemy.Table(
     sqlalchemy.Column("update_time", sqlalchemy.DateTime),
 )
 
+def format_datetime(data:dict):
+    data["start_time"] = data["start_time"].isoformat()
+    data["end_time"] = data["end_time"].isoformat()
+    data["update_time"] = data["update_time"].isoformat()
+
 async def save_task(user_task:dict) -> None:
     print(f'save task: {user_task}')
     await DB.execute(user_tasks.insert().values(**user_task))
@@ -57,14 +62,16 @@ async def find_unfinished_tasks() -> List:
     return await DB.fetch_all(user_tasks.select().where(user_tasks.c.status == TaskStatus.PENDING.value or user_tasks.c.status == TaskStatus.RUNNING.value))
 
 async def find_unfinished_by_client_id(client_id:str) -> List:
-    return await DB.fetch_all(user_tasks.select()
+    lst = await DB.fetch_all(user_tasks.select()
                               .where(user_tasks.c.client_id == client_id \
                                      and (user_tasks.c.status == TaskStatus.PENDING.value \
                                           or user_tasks.c.status == TaskStatus.RUNNING.value))
                                           .order_by(user_tasks.c.start_time.desc()))
+    return None if not lst else [format_datetime(UserTask(**item).model_dump()) for item in lst]
 
 async def find_by_client_id(client_id:str) -> List:
-    return await DB.fetch_all(user_tasks.select().where(user_tasks.c.client_id == client_id))
+    lst = await DB.fetch_all(user_tasks.select().where(user_tasks.c.client_id == client_id))
+    return None if not lst else [format_datetime(UserTask(**item).model_dump()) for item in lst]
 
 
 async def update_user_task(user_task:dict) -> None:

@@ -15,6 +15,7 @@ add job
 interval = 5 seconds
 ''' 
 scheduler.add_job(task_scheduler.handle_pending_tasks, 'interval', seconds=5)
+scheduler.add_job(task_scheduler.update_unfinished_tasks, 'interval', seconds=10)
 
 # start scheduler
 scheduler.start()

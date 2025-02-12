@@ -46,6 +46,7 @@ class Prompt(HTTPEndpoint):
         }
         await save_task(user_task)
         user_task["inputs"] = inputs
+        user_task["start_time"] = user_task["start_time"].isoformat()
         return JSONResponse(user_task)
     
 class Queue(HTTPEndpoint):
@@ -53,14 +54,14 @@ class Queue(HTTPEndpoint):
     async def get(self, request:Request):
         client_id = request.user.username
         result = await find_unfinished_by_client_id(client_id)
-        return JSONResponse(result)
+        return JSONResponse({"data": None if not result else result})
 
 class Status(HTTPEndpoint):
     @requires("authenticated")
     async def get(self, request):
         client_id = request.user.username
         result = await find_by_client_id(client_id=client_id)
-        return JSONResponse(result)
+        return JSONResponse({"data": None if not result else result})
     
 class Video(HTTPEndpoint):
     async def get(self, request:Request):

@@ -73,3 +73,30 @@ async def handle_pending_tasks():
                 }
                 await update_user_task(update_task)
 
+
+async def update_unfinished_tasks():
+    tasks = await find_unfinished_tasks()
+    for task in tasks:
+        resp = get_history(task["server_ip"])
+        if resp.status_code == 200:
+            history = resp.json()
+            if history.__contains__(task["prompt_id"]):
+                data = history[task["prompt_id"]]
+                update_task = None
+                if data["status"]["status_str"] == "success":
+                    update_task = {
+                        "task_id": task["task_id"],
+                        "outputs": str(data["outputs"]),
+                        "status": TaskStatus.DONE.value,
+                        "end_time": datetime.now(),
+                        "update_time": datetime.now()
+                    }
+                if data["status"]["status_str"] == "error":
+                    update_task = {
+                        "task_id": task["task_id"],
+                        "status": TaskStatus.INTERUPTED.value,
+                        "end_time": datetime.now(),
+                        "update_time": datetime.now()
+                    }
+                if update_task:
+                    await update_user_task(update_task)
