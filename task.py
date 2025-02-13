@@ -35,7 +35,7 @@ class Prompt(HTTPEndpoint):
         inputs = await request.json()
         task_id = str(uuid.uuid4())
         client_id = request.user.username
-        user_type = UserType.NORMAL.value if "vip" in request.auth.scopes else UserType.VIP.value
+        user_type = UserType.VIP.value if "vip" in request.auth.scopes else UserType.NORMAL.value
         user_task = {
             "task_id": task_id,
             "client_id": client_id,
