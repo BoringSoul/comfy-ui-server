@@ -1,0 +1,42 @@
+INFO:     Started server process [31364]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
+INFO:     34.92.68.254:54884 - "POST /user/login HTTP/1.1" 200 OK
+INFO:     34.92.68.254:57914 - "POST /user/login HTTP/1.1" 200 OK
+INFO:     34.92.68.254:57925 - "POST /user/login HTTP/1.1" 200 OK
+INFO:     34.92.68.254:58095 - "OPTIONS /user/login HTTP/1.1" 405 Method Not Allowed
+INFO:     34.92.68.254:58096 - "OPTIONS /user/login HTTP/1.1" 405 Method Not Allowed
+INFO:     34.92.68.254:58923 - "OPTIONS /user/login HTTP/1.1" 405 Method Not Allowed
+INFO:     34.92.68.254:58995 - "OPTIONS /user/login HTTP/1.1" 405 Method Not Allowed
+INFO:     34.92.68.254:59073 - "OPTIONS /user/login HTTP/1.1" 405 Method Not Allowed
+INFO:     34.92.68.254:59133 - "OPTIONS /user/login HTTP/1.1" 405 Method Not Allowed
+INFO:     185.247.137.53:43725 - "GET / HTTP/1.1" 404 Not Found
+INFO:     34.92.68.254:59674 - "OPTIONS /user/login HTTP/1.1" 405 Method Not Allowed
+INFO:     34.92.68.254:59753 - "OPTIONS /user/login HTTP/1.1" 405 Method Not Allowed
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+INFO:     64.227.175.100:60844 - "GET / HTTP/1.1" 404 Not Found
+INFO:     64.227.175.100:60850 - "GET /login HTTP/1.1" 404 Not Found
+INFO:     34.92.68.254:60913 - "POST /login HTTP/1.1" 400 Bad Request
+INFO:     34.92.68.254:60930 - "POST /user/login HTTP/1.1" 200 OK
+INFO:     34.92.68.254:60947 - "POST /user/login HTTP/1.1" 200 OK
+INFO:     34.92.68.254:60963 - "POST /login HTTP/1.1" 400 Bad Request
+INFO:     34.92.68.254:60974 - "POST /user/login HTTP/1.1" 200 OK
+INFO:     34.92.68.254:61020 - "POST /login HTTP/1.1" 400 Bad Request
+INFO:     34.92.68.254:61065 - "POST /user/login HTTP/1.1" 200 OK
+INFO:     34.92.68.254:61065 - "POST /user/login HTTP/1.1" 200 OK
+INFO:     34.92.68.254:61087 - "POST /login HTTP/1.1" 400 Bad Request
+INFO:     34.92.68.254:61137 - "POST /login HTTP/1.1" 400 Bad Request
+INFO:     34.92.68.254:61181 - "POST /register HTTP/1.1" 400 Bad Request
+INFO:     34.92.68.254:61263 - "POST /login HTTP/1.1" 400 Bad Request
+INFO:     34.92.68.254:61287 - "POST /user/login HTTP/1.1" 200 OK
+INFO:     34.92.68.254:61681 - "POST /login HTTP/1.1" 400 Bad Request
+INFO:     34.92.68.254:61724 - "POST /login HTTP/1.1" 400 Bad Request
+INFO:     34.92.68.254:61756 - "POST /login HTTP/1.1" 400 Bad Request
+INFO:     34.92.68.254:61767 - "POST /login HTTP/1.1" 400 Bad Request
+INFO:     154.212.141.140:35682 - "GET / HTTP/1.1" 404 Not Found
+INFO:     47.254.69.133:52894 - "GET /.env HTTP/1.1" 404 Not Found
+INFO:     34.92.68.254:58358 - "POST /login HTTP/1.1" 400 Bad Request
+INFO:     34.92.68.254:58427 - "OPTIONS /user/login HTTP/1.1" 405 Method Not Allowed
+INFO:     34.92.68.254:58561 - "POST /user/login HTTP/1.1" 200 OK
