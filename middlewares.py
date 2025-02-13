@@ -3,6 +3,7 @@ from starlette.authentication import (
     AuthCredentials, AuthenticationBackend, AuthenticationError, SimpleUser
 )
 from starlette.middleware import Middleware
+from starlette.middleware.cors import CORSMiddleware
 from starlette.middleware.authentication import AuthenticationMiddleware
 import base64
 import model.db.user as user_query
@@ -36,5 +37,6 @@ class BasicAuthBackend(AuthenticationBackend):
 
 
 middlewares = [
-    Middleware(AuthenticationMiddleware, backend=BasicAuthBackend())
+    Middleware(AuthenticationMiddleware, backend=BasicAuthBackend()),
+    Middleware(CORSMiddleware, allow_origins=['*'])
 ]
