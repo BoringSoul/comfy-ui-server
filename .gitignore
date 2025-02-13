@@ -3,3 +3,4 @@ env/**
 __pycache__/**
 model/db/**.db
 .env
+**/__pycache__/**
