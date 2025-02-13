@@ -2,6 +2,7 @@
 import requests
 import uuid
 from datetime import datetime
+from collections import defaultdict
 
 from starlette.responses import JSONResponse
 from starlette.responses import Response
@@ -65,6 +66,17 @@ class Queue(HTTPEndpoint):
         if data["task_id"]:
             await delete_pending_task(data["task_id"])
         return JSONResponse({"code": 200, "msg": "ok"})
+    
+class QueueGroup(HTTPEndpoint):
+    @requires("authenticated")
+    async def get(self, request:Request):
+        tasks = await find_pending_tasks()
+        if not tasks:
+            return JSONResponse({"data": None})
+        group_tasks = defaultdict(list)
+        for task in tasks:
+            group_tasks[task["user_type"]].append(task)
+        return JSONResponse({"data": group_tasks})
 
 class Interrupt(HTTPEndpoint):
     @requires("authenticated")
@@ -115,6 +127,7 @@ routes = [
     Route("/image", Image),
     Route("/prompt", Prompt),
     Route("/queue", Queue),
+    Route("/queue/group", QueueGroup),
     Route("/status", Status),
     Route("/video", Video),
     Route("/interrupt", Interrupt),
