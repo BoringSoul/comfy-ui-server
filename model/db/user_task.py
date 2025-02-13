@@ -48,9 +48,9 @@ user_tasks = sqlalchemy.Table(
 )
 
 def format_datetime(data:dict):
-    data["start_time"] = data["start_time"].isoformat()
-    data["end_time"] = data["end_time"].isoformat()
-    data["update_time"] = data["update_time"].isoformat()
+    data["start_time"] = data["start_time"].isoformat() if data["start_time"] else None
+    data["end_time"] = data["end_time"].isoformat() if data["end_time"] else None
+    data["update_time"] = data["update_time"].isoformat() if data["update_time"] else None
     return data
 
 async def save_task(user_task:dict) -> None:

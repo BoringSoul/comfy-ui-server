@@ -71,7 +71,7 @@ class Interrupt(HTTPEndpoint):
         assert data['task_id']
         task = await find_by_task_id(data["task_id"])
         if task["status"] != TaskStatus.RUNNING.value or not task["prompt_id"]:
-            return JSONResponse({"code": 400, "msg": "task is invalid"})
+            return JSONResponse({"code": 400, "msg": "task is invalid or task is finished"})
         if self.task_running(task["server_ip"], task["prompt_id"]):
             self.interrupt(task["server_ip"])
         await update_user_task({
@@ -83,10 +83,10 @@ class Interrupt(HTTPEndpoint):
     
     def task_running(self, host:str, prompt_id:str)->bool:
         resp = requests.get(f"http://{host}:8188/queue")
-        return resp.status_code == 200 and prompt_id == resp["queue_running"][1]
+        return resp.status_code == 200 and resp.json()["queue_running"] and prompt_id == resp.json()["queue_running"][0][1]
     
     def interrupt(self, host:str)-> bool:
-        requests.post(host=f"http://{host}:8188/interrupt")
+        requests.post(url=f"http://{host}:8188/interrupt")
 
 
 class Status(HTTPEndpoint):
