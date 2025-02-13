@@ -38,5 +38,5 @@ class BasicAuthBackend(AuthenticationBackend):
 
 middlewares = [
     Middleware(AuthenticationMiddleware, backend=BasicAuthBackend()),
-    Middleware(CORSMiddleware, allow_origins=['*'])
+    Middleware(CORSMiddleware, allow_origins=['*'], allow_methods=['*'], allow_headers=['*'])
 ]
