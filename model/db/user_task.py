@@ -6,7 +6,7 @@ from .connector import METADATA
 from datetime import datetime
 from .connector import DB
 from typing import List
-from enum import Enum
+from .all_enums import TaskStatus
 
 class UserTask(BaseModel):
     task_id: str
@@ -17,19 +17,10 @@ class UserTask(BaseModel):
     inputs: str
     outputs: Optional[str]
     status: int
+    submit_time: datetime | None
     start_time: datetime | None
     end_time: datetime | None
     update_time: datetime | None
-
-class TaskStatus(Enum):
-    PENDING = -1
-    RUNNING = 0
-    INTERUPTED = 1
-    DONE = 2
-
-class UserType(Enum):
-    NORMAL = 0
-    VIP = 1
 
 user_tasks = sqlalchemy.Table(
     "user_task",
@@ -42,12 +33,14 @@ user_tasks = sqlalchemy.Table(
     sqlalchemy.Column("inputs", sqlalchemy.String),
     sqlalchemy.Column("outputs", sqlalchemy.String),
     sqlalchemy.Column("status", sqlalchemy.Integer),
+    sqlalchemy.Column("submit_time", sqlalchemy.DateTime),
     sqlalchemy.Column("start_time", sqlalchemy.DateTime),
     sqlalchemy.Column("end_time", sqlalchemy.DateTime),
     sqlalchemy.Column("update_time", sqlalchemy.DateTime),
 )
 
 def format_datetime(data:dict):
+    data["submit_time"] = data["submit_time"].isoformat() if data["submit_time"] else None
     data["start_time"] = data["start_time"].isoformat() if data["start_time"] else None
     data["end_time"] = data["end_time"].isoformat() if data["end_time"] else None
     data["update_time"] = data["update_time"].isoformat() if data["update_time"] else None

@@ -11,8 +11,10 @@ from starlette.routing import Route
 from model.req.task import *
 from model.resp.task import *
 from model.db.user_task import *
+from model.db.all_enums import *
 from prompt_map import *
 from starlette.authentication import requires
+
 
 HOST = "99.79.37.130"
 URL = f"http://{HOST}:8188"
@@ -42,11 +44,11 @@ class Prompt(HTTPEndpoint):
             "user_type": user_type,
             "inputs": str(inputs),
             "status": TaskStatus.PENDING.value,
-            "start_time": datetime.now()
+            "submit_time": datetime.now()
         }
         await save_task(user_task)
         user_task["inputs"] = inputs
-        user_task["start_time"] = user_task["start_time"].isoformat()
+        user_task["submit_time"] = user_task["submit_time"].isoformat()
         return JSONResponse(user_task)
     
 class Queue(HTTPEndpoint):

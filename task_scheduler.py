@@ -9,7 +9,7 @@ from model.db.user_task import *
 from prompt_map import *
 from collections import defaultdict
 from model.req.task import PromptRequest
-
+from model.db.all_enums import UserType
 
 '''
 check  comfy ui server is free
@@ -69,6 +69,7 @@ async def handle_pending_tasks():
                     "prompt_id": resp.json()["prompt_id"],
                     "server_ip": server,
                     "status": TaskStatus.RUNNING.value,
+                    "start_time": datetime.now(),
                     "update_time": datetime.now()
                 }
                 await update_user_task(update_task)

@@ -2,6 +2,7 @@ from starlette.responses import JSONResponse
 from starlette.endpoints import HTTPEndpoint
 from starlette.routing import Route
 from model.db.user import *
+from model.db.all_enums import UserType
 
 import base64
 
@@ -18,7 +19,7 @@ class Login(HTTPEndpoint):
         data = await request.json()
         user = await self.validate(**data)
         if user:
-            return JSONResponse({"token": self.parse_token(**data)})
+            return JSONResponse({"token": self.parse_token(**data), "user_type": UserType.VIP.value if user.balance > 0 else UserType.NORMAL.value})
         return JSONResponse({"code": 500, "msg":"validate failed"})
 
     async def validate(self, username:str, auth_type:str, credential:str) -> bool:
