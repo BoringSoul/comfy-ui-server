@@ -51,6 +51,7 @@ def format_datetime(data:dict):
     data["start_time"] = data["start_time"].isoformat()
     data["end_time"] = data["end_time"].isoformat()
     data["update_time"] = data["update_time"].isoformat()
+    return data
 
 async def save_task(user_task:dict) -> None:
     print(f'save task: {user_task}')
@@ -59,20 +60,24 @@ async def find_pending_tasks() -> List:
     return await DB.fetch_all(user_tasks.select().where(user_tasks.c.status == TaskStatus.PENDING.value))
 
 async def delete_pending_tasks(client_id:str):
-    return await DB.execute(user_tasks.delete().where(user_tasks.c.client_id == client_id and user_tasks.c.status == TaskStatus.PENDING.value))
+    return await DB.execute(user_tasks.delete()
+                            .where(user_tasks.c.client_id == client_id)
+                            .where(user_tasks.c.status == TaskStatus.PENDING.value))
 
 async def delete_pending_task(task_id:str):
-    return await DB.execute(user_tasks.delete().where(user_tasks.c.task_id == task_id and user_tasks.c.status == TaskStatus.PENDING.value))
+    return await DB.execute(user_tasks.delete()
+                            .where(user_tasks.c.task_id == task_id)
+                            .where(user_tasks.c.status == TaskStatus.PENDING.value))
 
 async def find_unfinished_tasks() -> List:
-    return await DB.fetch_all(user_tasks.select().where(user_tasks.c.status == TaskStatus.PENDING.value or user_tasks.c.status == TaskStatus.RUNNING.value))
+    return await DB.fetch_all(user_tasks.select().where(user_tasks.c.status.in_([TaskStatus.RUNNING.value, TaskStatus.PENDING.value])))
 
 async def find_unfinished_by_client_id(client_id:str) -> List:
-    lst = await DB.fetch_all(user_tasks.select()
-                              .where(user_tasks.c.client_id == client_id \
-                                     and (user_tasks.c.status == TaskStatus.PENDING.value \
-                                          or user_tasks.c.status == TaskStatus.RUNNING.value))
-                                          .order_by(user_tasks.c.start_time.desc()))
+    lst = await DB.fetch_all(user_tasks
+                            .select()
+                            .where(user_tasks.c.client_id == client_id)
+                            .where(user_tasks.c.status.in_([TaskStatus.RUNNING.value, TaskStatus.PENDING.value]))
+                            .order_by(user_tasks.c.start_time.desc()))
     return None if not lst else [format_datetime(UserTask(**item).model_dump()) for item in lst]
 
 async def find_by_task_id(task_id:str) -> dict:
@@ -84,7 +89,9 @@ async def find_by_client_id(client_id:str) -> List:
     return None if not lst else [format_datetime(UserTask(**item).model_dump()) for item in lst]
 
 async def find_running_tasks(client_id:str) -> List:
-    lst = await DB.fetch_all(user_tasks.select().where(user_tasks.c.client_id == client_id and user_tasks.c.status == TaskStatus.RUNNING.value))
+    lst = await DB.fetch_all(user_tasks.select()
+                             .where(user_tasks.c.client_id == client_id)
+                             .where(user_tasks.c.status == TaskStatus.RUNNING.value))
     return None if not lst else [format_datetime(UserTask(**item).model_dump()) for item in lst]
 
 async def update_user_task(user_task:dict) -> None:
