@@ -50,7 +50,8 @@ async def save_task(user_task:dict) -> None:
     print(f'save task: {user_task}')
     await DB.execute(user_tasks.insert().values(**user_task))
 async def find_pending_tasks() -> List:
-    return await DB.fetch_all(user_tasks.select().where(user_tasks.c.status == TaskStatus.PENDING.value))
+    lst = await DB.fetch_all(user_tasks.select().where(user_tasks.c.status == TaskStatus.PENDING.value))
+    return None if not lst else [format_datetime(UserTask(**item).model_dump()) for item in lst]
 
 async def delete_pending_tasks(client_id:str):
     return await DB.execute(user_tasks.delete()
