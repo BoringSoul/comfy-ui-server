@@ -11,7 +11,7 @@ import model.db.user as user_query
 
 class BasicAuthBackend(AuthenticationBackend):
     async def authenticate(self, conn):
-        exclude = ["/user/login", "/user/register"]
+        exclude = ["/user/login", "/user/register", "/api/user/login", "/api/user/register"]
         if conn.url.path in exclude:
             return
         if "Authorization" not in conn.headers:
