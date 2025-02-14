@@ -2,7 +2,7 @@ import requests
 import random
 import json
 
-HOST = "99.79.37.130"
+HOST = "localhost"
 NORMAL_TOKEN = "dGFvOnBhc3N3b3JkOjEyMzM0NQ=="
 VIP_TOKEN = "Y2hhcm06cGFzc3dvcmQ6MTIzMzQ1"
 TOKENS =  [NORMAL_TOKEN, VIP_TOKEN]
