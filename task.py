@@ -61,9 +61,9 @@ class Queue(HTTPEndpoint):
     @requires("authenticated")
     async def post(self, request:Request):
         data = await request.json()
-        if data["clear"]:
+        if data.__contains__("clear"):
             await delete_pending_tasks(client_id=request.user.username)
-        if data["task_id"]:
+        if data.__contains__("task_id"):
             await delete_pending_task(data["task_id"])
         return JSONResponse({"code": 200, "msg": "ok"})
     
