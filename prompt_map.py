@@ -374,3 +374,4 @@ def handle_sdxl_lcm_prompt(prompt_request:PromptRequest) -> dict:
         prompt["5"]["inputs"]["fps"] = prompt_request.fps
     if prompt_request.steps:
         prompt["1"]["inputs"]["steps"] = prompt_request.steps
+    return prompt
