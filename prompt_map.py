@@ -134,7 +134,7 @@ PROMPT_MAP = {
                 "46",
                 0
             ],
-            "steps": 20,
+            "steps": 10,
             "cfg": 1.3,
             "sampler_name": "lcm",
             "scheduler": "normal",
@@ -193,9 +193,9 @@ PROMPT_MAP = {
                 "45",
                 1
             ],
-            "video_frames": 100,
+            "video_frames": 25,
             "motion_bucket_id": 192,
-            "fps": 25,
+            "fps": 6,
             "augmentation_level": 0,
             "clip_vision": [
                 "4",
@@ -217,7 +217,7 @@ PROMPT_MAP = {
         },
         "6": {
             "inputs": {
-            "image": "IMG_0209.jpeg",
+            "image": "SABC.jpeg",
             "upload": "image"
             },
             "class_type": "LoadImage",
@@ -252,7 +252,7 @@ PROMPT_MAP = {
             "save_metadata": True,
             "trim_to_audio": False,
             "pingpong": True,
-            "save_output": True,
+            "save_output": False,
             "images": [
                 "7",
                 0
@@ -260,7 +260,7 @@ PROMPT_MAP = {
             },
             "class_type": "VHS_VideoCombine",
             "_meta": {
-            "title": "Video Combine"
+            "title": "Video Combine 🎥🅥🅗🅢"
             }
         },
         "10": {
@@ -282,7 +282,7 @@ PROMPT_MAP = {
         "16": {
             "inputs": {
             "lora_name": "lcm-lora-sdxl.safetensors",
-            "strength_model": 0.3,
+            "strength_model": 1,
             "strength_clip": 1,
             "model": [
                 "4",
@@ -331,14 +331,14 @@ PROMPT_MAP = {
         },
         "46": {
             "inputs": {
-            "seed": 513062095366474
+            "seed": 153186343832434
             },
             "class_type": "Seed Generator",
             "_meta": {
             "title": "Seed Generator"
             }
         }
-    }
+        }
 }
 
 from model.req.task import PromptRequest
