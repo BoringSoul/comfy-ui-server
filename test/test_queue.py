@@ -10,12 +10,12 @@ TOKENS =  [NORMAL_TOKEN, VIP_TOKEN]
 def prompt():
     params = {
         "image_name":"IMG_0209.jpeg",
-        "model_name": "svd",
+        "model_name": "sdxl_lcm",
         "steps":random.randint(2,10)
     }
-    return requests.post(f"http://{HOST}:8000/task/prompt", json=json.dumps(params), headers={"Authorization": f'basic {random.choice(TOKENS)}'})
+    return requests.post(f"http://{HOST}:8000/api/task/prompt", json=json.dumps(params), headers={"Authorization": f'basic {random.choice(TOKENS)}'})
 
 if __name__ == "__main__":
-    for i in range(20):
+    for i in range(1):
         resp = prompt()
         print(resp.json())

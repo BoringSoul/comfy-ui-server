@@ -578,7 +578,7 @@ PROMPT_MAP = {
             "inputs": {
             "lora_name": {
                 "content": "CLAYMATE_V2.03_.safetensors",
-                "image": null
+                "image": None
             },
             "strength_model": 1,
             "strength_clip": 1,
