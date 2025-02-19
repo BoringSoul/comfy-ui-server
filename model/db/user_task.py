@@ -81,7 +81,7 @@ async def find_by_task_id(task_id:str) -> dict:
     return None if not i else format_datetime(UserTask(**i).model_dump())
 
 async def find_by_client_id(client_id:str) -> List:
-    lst = await DB.fetch_all(user_tasks.select().where(user_tasks.c.client_id == client_id).order_by(user_tasks.c.submit_time.asc()))
+    lst = await DB.fetch_all(user_tasks.select().where(user_tasks.c.client_id == client_id).order_by(user_tasks.c.submit_time.desc()))
     return None if not lst else [format_datetime(UserTask(**item).model_dump()) for item in lst]
 
 async def find_running_tasks(client_id:str) -> List:
