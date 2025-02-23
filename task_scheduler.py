@@ -81,7 +81,7 @@ async def update_unfinished_tasks():
     tasks = await find_unfinished_tasks()
     for task in tasks:
         print(f'handle task = {task}')
-        if not task.__contains__("server_ip"):
+        if not task.__contains__("server_ip") or not task["server_ip"]:
             continue
         resp = get_history(task["server_ip"])
         if resp.status_code == 200:
