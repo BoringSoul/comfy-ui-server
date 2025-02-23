@@ -60,6 +60,7 @@ async def handle_pending_tasks():
             task = group_tasks[UserType.VIP.value].pop()
         else:
             task = group_tasks[UserType.NORMAL.value].pop() if len(group_tasks[UserType.NORMAL.value]) > 0 else None
+        print(f'run task -> {task}')
         if task:
             inputs = task["inputs"].replace("'", '"')
             target_prompt = get_prompt(PromptRequest(**json.loads(inputs)))
@@ -78,8 +79,8 @@ async def handle_pending_tasks():
 
 async def update_unfinished_tasks():
     tasks = await find_unfinished_tasks()
-    print(f"update unfinished tasks -> {tasks}")
     for task in tasks:
+        print(f'handle task = {task}')
         if not task.__contains__("server_ip"):
             continue
         resp = get_history(task["server_ip"])
