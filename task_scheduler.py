@@ -78,6 +78,7 @@ async def handle_pending_tasks():
 
 async def update_unfinished_tasks():
     tasks = await find_unfinished_tasks()
+    print(f"update unfinished tasks -> {tasks}")
     for task in tasks:
         if not task.__contains__("server_ip"):
             continue
