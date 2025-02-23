@@ -47,7 +47,6 @@ def group_task_by_user_type(tasks:List):
 
 async def handle_pending_tasks():
     tasks = await find_pending_tasks()
-    print(tasks)
     if not tasks:
         return
     available_servers = [server for server in get_servers() if server_free(server)]
