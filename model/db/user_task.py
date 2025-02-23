@@ -65,8 +65,9 @@ async def delete_pending_task(task_id:str):
                             .where(user_tasks.c.status == TaskStatus.PENDING.value))
 
 async def find_unfinished_tasks() -> List:
-    return await DB.fetch_all(user_tasks.select().where(user_tasks.c.status.in_([TaskStatus.RUNNING.value, TaskStatus.PENDING.value]))
+    lst = await DB.fetch_all(user_tasks.select().where(user_tasks.c.status.in_([TaskStatus.RUNNING.value, TaskStatus.PENDING.value]))
                               .order_by(user_tasks.c.submit_time.asc()))
+    return None if not lst else [format_datetime(UserTask(**item).model_dump()) for item in lst]
 
 async def find_unfinished_by_client_id(client_id:str) -> List:
     lst = await DB.fetch_all(user_tasks

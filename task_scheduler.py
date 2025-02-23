@@ -60,11 +60,11 @@ async def handle_pending_tasks():
             task = group_tasks[UserType.VIP.value].pop()
         else:
             task = group_tasks[UserType.NORMAL.value].pop() if len(group_tasks[UserType.NORMAL.value]) > 0 else None
-        print(f'run task -> {task}')
         if task:
             inputs = task["inputs"].replace("'", '"')
             target_prompt = get_prompt(PromptRequest(**json.loads(inputs)))
             resp = prompt(server, task["client_id"], target_prompt)
+            print(resp.text)
             if resp.status_code == 200:
                 update_task = {
                     "task_id": task["task_id"],
