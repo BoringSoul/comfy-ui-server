@@ -20,7 +20,6 @@ def get_servers() -> List:
 
 def server_free(host:str) -> bool:
     resp = requests.get(f"http://{host}:8188/queue")
-    print(f'server is free ? {resp.json()}')
     return resp.status_code == 200 and resp.json()["queue_running"] == [] 
 
 '''
