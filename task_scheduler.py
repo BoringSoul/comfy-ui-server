@@ -20,6 +20,7 @@ def get_servers() -> List:
 
 def server_free(host:str) -> bool:
     resp = requests.get(f"http://{host}:8188/queue")
+    print(f'server is free ? {resp.json()}')
     return resp.status_code == 200 and resp.json()["queue_running"] == [] 
 
 '''
@@ -46,6 +47,7 @@ def group_task_by_user_type(tasks:List):
 
 async def handle_pending_tasks():
     tasks = await find_pending_tasks()
+    print(tasks)
     if not tasks:
         return
     available_servers = [server for server in get_servers() if server_free(server)]
