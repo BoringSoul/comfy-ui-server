@@ -2,9 +2,9 @@
 import sqlalchemy
 from pydantic import BaseModel
 from typing import Optional
-from .connector import METADATA
+from connector import METADATA
 from datetime import datetime
-from .connector import DB
+from connector import DB
 from typing import List
 from .all_enums import TaskStatus
 

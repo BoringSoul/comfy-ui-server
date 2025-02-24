@@ -1,10 +1,10 @@
 
 import sqlalchemy
 from pydantic import BaseModel
-from .connector import METADATA
+from connector import METADATA
 import decimal
 from datetime import datetime
-from .connector import DB
+from connector import DB
 from typing import List
 
 class User(BaseModel):

@@ -5,11 +5,12 @@
 import requests
 import json
 from datetime import datetime
-from model.db.user_task import *
+from model.db import user_task
 from prompt_map import *
 from collections import defaultdict
 from model.req.task import PromptRequest
-from model.db.all_enums import UserType
+from model.db.all_enums import UserType, TaskStatus
+from typing import List
 
 '''
 check  comfy ui server is free
@@ -45,9 +46,8 @@ def group_task_by_user_type(tasks:List):
     return user_tasks
 
 async def handle_pending_tasks():
-    print("handle pending tasks")
-    tasks = await find_pending_tasks()
-    print(f'pending tasks len: {len(tasks)}, detail: {tasks}')
+    tasks = await user_task.find_pending_tasks()
+    print(f'pending tasks => {tasks}')
     if not tasks:
         return
     available_servers = [server for server in get_servers() if server_free(server)]
@@ -75,14 +75,13 @@ async def handle_pending_tasks():
                     "start_time": datetime.now(),
                     "update_time": datetime.now()
                 }
-                await update_user_task(update_task)
+                await user_task.update_user_task(update_task)
 
 
 async def update_unfinished_tasks():
-    print("update unfinished tasks")
-    tasks = await find_unfinished_tasks()
+    tasks = await user_task.find_unfinished_tasks()
     for task in tasks:
-        print(f'handle task = {task}')
+        print(f'update_unfinished_task => {task}')
         if not task.__contains__("server_ip") or not task["server_ip"]:
             continue
         resp = get_history(task["server_ip"])
@@ -107,4 +106,4 @@ async def update_unfinished_tasks():
                         "update_time": datetime.now()
                     }
                 if update_task:
-                    await update_user_task(update_task)
+                    await user_task.update_user_task(update_task)
