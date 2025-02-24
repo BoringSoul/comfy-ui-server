@@ -17,7 +17,7 @@ check  comfy ui server is free
 '''
 
 def get_servers() -> List:
-    return ["localhost"]
+    return ["15.157.172.224"]
 
 def server_free(host:str) -> bool:
     resp = requests.get(f"http://{host}:8188/queue")

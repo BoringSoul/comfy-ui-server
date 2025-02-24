@@ -17,7 +17,7 @@ from prompt_map import *
 from starlette.authentication import requires
 
 
-HOST = "localhost"
+HOST = "15.157.172.224"
 URL = f"http://{HOST}:8188"
 
 class Image(HTTPEndpoint):
