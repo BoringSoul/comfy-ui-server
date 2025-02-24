@@ -408,7 +408,7 @@ PROMPT_MAP = {
         "5": {
             "inputs": {
             "seed": 405155855046177,
-            "steps": 35,
+            "steps": 20,
             "cfg": 7,
             "sampler_name": "dpmpp_2m",
             "scheduler": "karras",
