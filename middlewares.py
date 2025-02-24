@@ -1,12 +1,13 @@
-from starlette.applications import Starlette
 from starlette.authentication import (
     AuthCredentials, AuthenticationBackend, AuthenticationError, SimpleUser
 )
 from starlette.middleware import Middleware
 from starlette.middleware.cors import CORSMiddleware
+from starlette.middleware.base import BaseHTTPMiddleware
 from starlette.middleware.authentication import AuthenticationMiddleware
 import base64
 import model.db.user as user_query
+from starlette.responses import JSONResponse
 
 
 class BasicAuthBackend(AuthenticationBackend):
@@ -38,8 +39,19 @@ class BasicAuthBackend(AuthenticationBackend):
             return user.api_token == credential
         return False
 
+class GlobalExceptionMiddleware(BaseHTTPMiddleware):
+    async def dispatch(self, request, call_next):
+        try:
+            return await call_next(request)
+        except Exception as exc:
+            # 自定义错误响应
+            return JSONResponse(
+                status_code=500,
+                content={"error": "Internal Server Error", "detail": str(exc)}
+            )
 
 middlewares = [
     Middleware(AuthenticationMiddleware, backend=BasicAuthBackend()),
-    Middleware(CORSMiddleware, allow_origins=['*'], allow_methods=['*'], allow_headers=['*'])
+    Middleware(CORSMiddleware, allow_origins=['*'], allow_methods=['*'], allow_headers=['*']),
+    Middleware(GlobalExceptionMiddleware)
 ]

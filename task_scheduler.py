@@ -45,6 +45,7 @@ def group_task_by_user_type(tasks:List):
     return user_tasks
 
 async def handle_pending_tasks():
+    print("handle pending tasks")
     tasks = await find_pending_tasks()
     if not tasks:
         return
@@ -77,6 +78,7 @@ async def handle_pending_tasks():
 
 
 async def update_unfinished_tasks():
+    print("update unfinished tasks")
     tasks = await find_unfinished_tasks()
     for task in tasks:
         print(f'handle task = {task}')
