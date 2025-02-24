@@ -22,8 +22,8 @@ async def lifespan(app):
     add job
     interval = 5 seconds
     ''' 
-    scheduler.add_job(task_scheduler.handle_pending_tasks, 'interval', seconds=5)
-    scheduler.add_job(task_scheduler.update_unfinished_tasks, 'interval', seconds=10)
+    scheduler.add_job(task_scheduler.handle_pending_tasks, 'interval', seconds=30)
+    scheduler.add_job(task_scheduler.update_unfinished_tasks, 'interval', seconds=60)
 
     # start scheduler
     scheduler.start()
