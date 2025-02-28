@@ -76,6 +76,13 @@ async def handle_pending_tasks():
                     "update_time": datetime.now()
                 }
                 await user_task.update_user_task(update_task)
+            else:
+                update_task = {
+                    "task_id": task["task_id"],
+                    "status": TaskStatus.INTERUPTED.value,
+                    "end_time": datetime.now(),
+                    "update_time": datetime.now()
+                }
 
 
 async def update_unfinished_tasks():
