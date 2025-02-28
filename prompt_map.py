@@ -753,10 +753,10 @@ def get_prompt(prompt_request:PromptRequest) -> dict:
 def handle_svd_prompt(prompt_request:PromptRequest) -> dict:
     prompt = PROMPT_MAP.get("svd")
     prompt["6"]["inputs"]["image"] = prompt_request.image_name
-    if prompt_request.width:
-        prompt["1"]["inputs"]["width"] = prompt_request.width
-    if prompt_request.height:
-        prompt["1"]["inputs"]["height"] = prompt_request.height
+    # if prompt_request.width:
+    #     prompt["1"]["inputs"]["width"] = prompt_request.width
+    # if prompt_request.height:
+    #     prompt["1"]["inputs"]["height"] = prompt_request.height
     if prompt_request.video_frames:
         prompt["1"]["inputs"]["video_frames"] = prompt_request.video_frames
     if prompt_request.fps:
